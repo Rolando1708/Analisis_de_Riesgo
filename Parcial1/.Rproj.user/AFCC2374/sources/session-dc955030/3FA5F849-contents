@@ -1,0 +1,139 @@
+---
+title: "Tarea 3"
+author: "Rolando Fortanell"
+date: "2025-02-06"
+output: html_document
+---
+
+
+
+# Ford
+## Hecho Estilizado 1
+```{r}
+library(quantmod)
+datos_ford <- new.env()
+ford <- "F"
+getSymbols(ford, env=datos_ford)
+precio_ford <- datos_ford[[ford]][,6]
+
+plot(precio_ford)
+```
+Como podemos ver el precio de la acción de Ford tiene el comportamiento de una caminata aleatoria ya que no hay una tendencia establecida a traves del tiempo. Podemos observar que a largo plazo el precio de Ford tiene bastantes subidas y bajadas, unas más drásticas que las otras. 
+
+## Hecho Estilizado 2
+```{r}
+rendimiento_ford <- na.omit(diff(log(precio_ford)))
+hist(rendimiento_ford, n = 100,main="histograma del rendimiento", prob = TRUE)
+lines(density(rendimiento_ford), col="blue", lwd=2)
+xval <- seq(min(rendimiento_ford),max(rendimiento_ford), length.out=100)
+```
+Podemos observar que la distribución del rendimiento del precio de Ford tiene una forma acampanada y que la media del rendimiento se agrupa alrededor de cero.
+
+## Hecho Estilizado 3
+
+```{r}
+plot(rendimiento_ford)
+```
+
+```{r}
+chartSeries(to.monthly(precio_ford), theme="white")
+addBBands()
+```
+Como podemos ver los rendimientos de ford presentan una volatilidad no constante y agrupada. 
+
+## Hecho Estillizado 4
+```{r}
+rendimiento_ford <- na.omit(diff(log(precio_ford)))
+hist(rendimiento_ford, n = 100,main="histograma del rendimiento", prob = TRUE)
+lines(density(rendimiento_ford), col="blue", lwd=2)
+xval <- seq(min(rendimiento_ford),max(rendimiento_ford), length.out=100)
+lines(xval, dnorm(xval, mean=mean(rendimiento_ford),sd=sd(rendimiento_ford)), col="darkgreen",lwd=3)
+```
+El rendimiento de ford tiene leptocurtosis ya que existe un exceso de datos alrededor de la media.
+
+
+# Amazon
+
+## Hecho Estilizado 1
+```{r}
+datos_amazon <- new.env()
+amazon <- "AMZN"
+getSymbols(amazon, env=datos_amazon)
+precio_amazon <- datos_amazon[[amazon]][,6]
+
+plot(precio_amazon)
+```
+El precio de la acción de amazon es una caminata aleatoria, aunque es verdad que existe un crecimiento positivo a largo plazo, esto no es algo que se pueda predecir a corto plazo porque no hay una tendencia establecida.
+## Hecho Estilizado 2
+```{r}
+rendimiento_amazon <- na.omit(diff(log(precio_amazon)))
+hist(rendimiento_amazon, n = 100,main="histograma del rendimiento", prob = TRUE)
+lines(density(rendimiento_amazon), col="blue", lwd=2)
+xval <- seq(min(rendimiento_amazon),max(rendimiento_amazon), length.out=100)
+```
+La distribución del rendimiento del precio de amazon tiene una forma acampanada y podemos notar que la media del rendimiento se agrupa alrededor de cero.
+
+## Hecho Estilizado 3
+
+```{r}
+plot(rendimiento_amazon)
+```
+
+
+```{r}
+chartSeries(to.monthly(precio_amazon), theme="white")
+addBBands()
+```
+El rendimiento de amazon presenta una volatilidad constante y tiende a agruparse
+## Hecho Estilizado 4
+```{r}
+rendimiento_amazon <- na.omit(diff(log(precio_amazon)))
+hist(rendimiento_amazon, n = 100,main="histograma del rendimiento", prob = TRUE)
+lines(density(rendimiento_amazon), col="blue", lwd=2)
+xval <- seq(min(rendimiento_amazon),max(rendimiento_amazon), length.out=100)
+lines(xval, dnorm(xval, mean=mean(rendimiento_amazon),sd=sd(rendimiento_amazon)), col="darkgreen",lwd=3)
+```
+La distribución de los rendimientos de amazon presentan leptocurtosis ya que existe un exceso de datos alrededor de la media
+# NVIDIA
+## Hecho Estilizado 1
+```{r}
+datos_nvidia <- new.env()
+nvidia <- "NVDA"
+getSymbols(nvidia, env=datos_nvidia)
+precio_nvidia <- datos_nvidia[[nvidia]][,6]
+
+plot(precio_nvidia)
+```
+El precio de Nvidia se comporta como una caminata aleatoria, aunque el precio a largo plazo tenga un crecimiento no es algo que nos pueda indicar tendencia a corto plazo.
+## Hecho Estilizado 2
+```{r}
+rendimiento_nvidia <- na.omit(diff(log(precio_nvidia)))
+hist(rendimiento_nvidia, n = 100,main="histograma del rendimiento", prob = TRUE)
+lines(density(rendimiento_nvidia), col="blue", lwd=2)
+xval <- seq(min(rendimiento_nvidia),max(rendimiento_nvidia), length.out=100)
+```
+La distribución del rendimiento del precio de nvidia tiene forma aproximadamente acampanada y la media de los rendimientos se agrupan alrededor de cero
+
+## Hecho Estilizado 3
+
+```{r}
+plot(rendimiento_nvidia)
+```
+
+```{r}
+chartSeries(to.monthly(precio_nvidia), theme="white")
+addBBands()
+```
+El rendimiento de Nvidia presenta una volatilidad no constante y tiende a agruparse
+## Hecho Estilizado 4
+```{r}
+rendimiento_nvidia <- na.omit(diff(log(precio_nvidia)))
+hist(rendimiento_nvidia, n = 100,main="histograma del rendimiento", prob = TRUE)
+lines(density(rendimiento_nvidia), col="blue", lwd=2)
+xval <- seq(min(rendimiento_nvidia),max(rendimiento_nvidia), length.out=100)
+lines(xval, dnorm(xval, mean=mean(rendimiento_nvidia),sd=sd(rendimiento_nvidia)), col="darkgreen",lwd=3)
+```
+La distribución de los rendimientos representa leptocurtosis ya que existe un exceso de datos alrededor de la media.
+
+# Conclusion
+En conclusión a pesar de la diferencia de como se mueven los precios de cada activo, los 3 cumplen con los 4 hechos estilizados, los 3 activos tienen un comportamiento similar a una caminata aleatoria, las distribuciones de sus rendimientos son aproximadamentes acampanadas y se agrupan alrededor del cero, los rendimientos de los activos presentan volatilidad no constante y que se tiende a agrupar y la distribución de los rendmientos presentan leptocurtosis.

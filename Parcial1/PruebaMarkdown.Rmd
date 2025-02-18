@@ -1,0 +1,18 @@
+---
+title: "Proyecto 1"
+author: "Rolando Fortanell"
+output: html_document
+date: "2025-01-31"
+---
+
+# Introducción
+
+Aqui voy a poner el texto que yo quiera
+
+**Negrita**
+
+*hola*
+
+## Historia
+
+### Reciente

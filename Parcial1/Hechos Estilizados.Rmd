@@ -1,0 +1,121 @@
+---
+title: "Hechos estilizados"
+author: "Rolando Fortanell"
+date: "2025-02-04"
+output: html_document
+---
+
+Los hechos estilizados son eventos que suceden de manera repetitiva y entonces asumimos que ese evento volvera a suceder
+
+Los hechos estilizados referentes al comportamiento del precio y del rendimiento de un activo que cotiza en una volsa de valores, son los sisguientes:
+
+## Hecho estilizado 1:
+
+Los precios de los activos y el valor de los portafolio siguen una caminata aleatoria.
+
+Para verificar este hecho primero vamos a graficar una caminata aleatoria.
+
+$$ S_t = S_{t-1} + \epsilon $$
+Donde $ \epsilon $ tiene un comportamiento normal con media cero y varianza 1. Es decir,
+$$ E[\epsilon]=0, V[\epsilon]= 1$$
+El comportamiento de epsilon, tambien cumple con lo siguientes:
+$$ Cov[\epsilon_i, \epsilon_j] = 0 $$
+Esto tiene implicaciones importantes:
+* No hay correlacion entre los rendimientos de un periodo con el de otro. Es decir, hay falta de memoria.
+* Determina la fomración eficiente de los precios.
+
+
+```{r}
+n <- 1000
+So <- 25
+epsilon <- rnorm(n)
+St <- So+cumsum(epsilon)
+plot(St, type="l", xlab="dia", ylab="precio", col="blue", main="Caminata aleatoria")
+```
+
+Vamos a comparar este comportamiento con el del precio de un activo 
+
+```{r}
+library(quantmod)
+datos <- new.env()
+clave <- "GFNORTEO.MX"
+getSymbols(clave, env=datos)
+precio <- datos[[clave]][,6]
+
+plot(precio)
+```
+El comportamiento observado corresponde a un comportamiento de caminata aleatoria, ya que no hay una tendencia clara sobre lo que puede suceder y la variable(precio) fluctua de manera libre en el tiempo,
+
+## Hecho estilizado 2:
+
+La distribución del rendimiento del precio tiene una forma aproximadamente "acampanada".
+
+Una caracteristica del comportamiento del rendimiento es que cuando hacemos su histograma para ver su distribución se observa una especie de campana con ciertas deformaciones. Nota, recuerda que el comportamiento de campana hace referencia a la distribucion normal.
+
+```{r}
+rendimiento <- na.omit(diff(log(precio)))
+hist(rendimiento, n = 100,main="histograma del rendimiento", prob = TRUE)
+lines(density(rendimiento), col="blue", lwd=2)
+xval <- seq(min(rendimiento),max(rendimiento), length.out=100)
+lines(xval, dnorm(xval, mean=mean(rendimiento),sd=sd(rendimiento)), col="darkgreen",lwd=3)
+```
+
+```{r}
+plot(rendimiento)
+```
+```{r}
+hist(precio, n = 100,main="histograma del precio", prob = TRUE)
+lines(density(precio), col="blue", lwd=2)
+xval <- seq(min(precio),max(precio), length.out=100)
+lines(xval, dnorm(xval, mean=mean(precio),sd=sd(precio)), col="darkgreen",lwd=3)
+```
+## Hecho estilizado 3:
+
+Los rendimientos de los activos presentan volatilidad no constante y agrupada
+
+```{r}
+plot(rendimiento)
+```
+
+```{r}
+to.monthly(precio)
+```
+```{r}
+chartSeries(to.monthly(precio), theme="white")
+addBBands()
+```
+En un mercado volatil las bandas de Bollinger se expanden, mientras que en un mercado menos volatil las bandas se estrechan. Esto nos dice que la volitalidad NO ES CONSTANTE y tiende a agruparse.
+
+## Hecho estilizado 4
+
+La distribución de los rendimientos presenta leptocurtosis.
+
+Este hecho nos dice que los rendmientos tienen un exceso de datos alrededor de la media (en exceso comparado con la distribución normal)
+
+Ademas los rendimientos tiene colas pesadas
+
+```{r}
+rendimiento <- na.omit(diff(log(precio)))
+hist(rendimiento, n = 100,main="histograma del rendimiento", prob = TRUE)
+lines(density(rendimiento), col="blue", lwd=2)
+xval <- seq(min(rendimiento),max(rendimiento), length.out=100)
+lines(xval, dnorm(xval, mean=mean(rendimiento),sd=sd(rendimiento)), col="darkgreen",lwd=3)
+```
+```{r}
+min(rendimiento)
+max(rendimiento)
+mean(rendimiento)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+

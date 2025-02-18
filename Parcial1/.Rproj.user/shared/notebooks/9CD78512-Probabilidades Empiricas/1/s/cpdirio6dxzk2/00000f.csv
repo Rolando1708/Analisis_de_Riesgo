@@ -1,0 +1,7 @@
+"0","set.seed(123)"
+"0","So <- 10"
+"0","mu <- 0.25"
+"0","sigma <- 0.15"
+"0","T <- 1 #El tiempo se escribe em años. utilizamos 1 porque vamos a predecir dentro de un año"
+"0","dt <- T/252 #Se divide entre 252 para poder ver la simulacion completa aunque el unico punto que nos importa es el final"
+"0","t <- seq(0,T,length.out=252)"
