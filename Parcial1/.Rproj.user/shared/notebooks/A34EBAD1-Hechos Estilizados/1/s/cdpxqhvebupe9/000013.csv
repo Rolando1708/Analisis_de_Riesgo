@@ -1,2 +1,0 @@
-"0","xval <- seq(min(rendimiento),max(rendimiento), length.out=100)"
-"0","lines(xval, dnorm(xval, mean=mean(rendimiento),sd=sd(rendimiento)), col=""darkgreen"",lwd=3)"

@@ -1,2 +1,0 @@
-"0","rendimiento <- na.omit(diff(log(precio)))"
-"0","hist(rendimiento, n = 100,main=""histograma del rendimiento"", prob = TRUE)"

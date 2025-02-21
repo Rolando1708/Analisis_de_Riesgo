@@ -1,2 +1,0 @@
-"0","rendimiento <- na.omit(diff(log(precio)))"
-"0","plot(rendimiento)"

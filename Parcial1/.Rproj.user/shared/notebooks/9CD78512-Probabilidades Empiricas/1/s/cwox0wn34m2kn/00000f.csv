@@ -1,8 +1,0 @@
-"0","sim <- 1000000"
-"0","p_final <- numeric(sim) # aqui vamos a guardar el precio final, el cual correspondel al precio anual de cada simulacion"
-"0",""
-"0","for(i in 1:sim){"
-"0","  W <- c(0,cumsum(sqrt(dt)*rnorm(251)))"
-"0","  St1 <- So*exp((mu-.5*sigma^2)*t+sigma*W)"
-"0","  p_final[i] <- St1[252]"
-"0","}"

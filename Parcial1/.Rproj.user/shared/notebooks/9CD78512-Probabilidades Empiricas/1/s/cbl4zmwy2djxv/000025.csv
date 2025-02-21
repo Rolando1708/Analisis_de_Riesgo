@@ -1,3 +1,0 @@
-"0","W <- c(0,cumsum(sqrt(dt)*rnorm(251)))"
-"0","St1 <- So*exp((mu-.5*sigma^2)*t+sigma*W)"
-"0","plot(t,St1, type=""l"", col='purple')"
