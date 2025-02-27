@@ -64,3 +64,82 @@ r_f <- as.xts(r_f$SF43936, order.by= r_f$Fecha)
 r_f <- to.monthly(r_f)[,4]
 ```
 
+Vamos a construir las variables de excedente de rendimiento del activo y del mercado, para hacer la regresión
+
+
+```{r}
+E_jf <- r_j-r_f
+E_mf <- r_m-r_f
+```
+
+Ahora si hacemos la regresión
+
+```{r}
+CAPM <- lm(E_jf~E_mf)
+summary(CAPM)
+```
+
+vamos a interpretar los resultados de la regresión
+
+R-cuadrada represetna el % de riesgo sistematico que hay en el activo
+
+```{r}
+Resultados <- summary(CAPM)
+Riesgo_Sistematico <- Resultados$r.squared*100
+Riesgo_Sistematico
+```
+
+En este caso el activo tiene un porcentaje de riesgo sistematico del 53.14% 
+
+Se considera que cuando el riesgo sistematico es mayor al 65% entonces hay una señal de alarma.
+
+Porcentaje de Riesgo No Sistematico
+
+```{r}
+Riesgo_NS <- 100-Riesgo_Sistematico
+Riesgo_NS
+Riesgo_Sistematico+Riesgo_NS
+```
+
+Los residuales de la regresión representan todo aquello que el modelo no es capaz de explicar, es decir todo lo que hace que la variable dependeinte cambie (excedente del activo) y que no es explicado por la variable independiente (excedente del mercado)
+
+El riesgo total esta dado por
+
+```{r}
+((Resultados$sigma^2)/(1-Resultados$r.squared))*100
+
+```
+
+Para este activo el riesgo total es de 0.8631%, de su valor. Lo que significa que por ejemplo si hoy el activo vale 143.84 el riesgo es que se pierda el 0.8631% de ese valor en un mes.
+
+Este RT se dvide en dos, riesgo sistematico y no sistematico
+
+Sistematico
+```{r}
+RT_S <- 0.8631*Resultados$r.squared
+RT_S
+```
+No sistematico
+```{r}
+RT_NS <- 0.8631*(1-Resultados$r.squared)
+RT_NS
+```
+
+Vamos a poner todo en una tabla
+
+```{r}
+library(tibble)
+Tabla <- tibble("Alpha"=Resultados$coefficients[1],
+                Resultados$coefficients[2],
+                Riesgo_Sistematico,
+                Riesgo_NS,
+                RT_S,
+                RT_NS)
+```
+
+
+
+
+
+
+
