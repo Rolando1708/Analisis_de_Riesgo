@@ -1,0 +1,98 @@
+---
+title: "Promedio Movil"
+author: "Rolando Fortanell"
+date: "2025-03-04"
+output: html_document
+---
+
+Estimación de un modelo de promedio móvil para estimar la varianza
+
+Aqui voy a poner las caracteristicas del promedio movi
+
+$$\sigma_{t, m}=\sum_{i=1}^m R_{t-1}^2$$
+
+```{r}
+library(quantmod)
+clave <- "GFNORTEO.MX"
+datos <- new.env()
+getSymbols(clave, env=datos)
+precio <- datos[[clave]][,6]
+rend <- na.omit(diff(log(precio)))
+rend_c <- rend^2
+```
+
+```{r}
+plot(rend)
+plot(rend_c)
+```
+
+El rendimiento al cuadrado constituye la estimación mas sencilla de la varianza
+
+
+```{r}
+library(TTR)
+Var_5 <- SMA(rend_c, n=6)
+Var_10 <- SMA(rend_c, n=11)
+Var_20 <- SMA(rend_c, n=21)
+Var_40 <- SMA(rend_c, n=41)
+
+```
+
+Antes de decidir quien es M, vamos a graficar las estimaciones de varianza de cada modelo (en reealidad tenemos 4 modelos, todos promedios moviles, pero con diferentes valores de m)
+
+```{r}
+layout(matrix(c(1,2)))
+plot(Var_5)
+plot(rend_c)
+
+layout(matrix(c(1,2)))
+plot(Var_10)
+plot(rend_c)
+
+layout(matrix(c(1,2)))
+plot(Var_20)
+plot(rend_c)
+
+layout(matrix(c(1,2)))
+plot(Var_40)
+plot(rend_c)
+```
+
+Para seleccionar el mejor valor de m, que produzca el menor error, usaremos tres indicadores:
+
+RMSE
+
+Aqui voy a poner la formula del RMSE, y explicar que mide
+
+
+```{r}
+library(tibble)
+RMSE <- tibble(
+  "m=5"=sqrt(mean((na.omit(rend_c - Var_5))^2)),
+  "m=10"=sqrt(mean((na.omit(rend_c - Var_10))^2)),
+  "m=20"=sqrt(mean((na.omit(rend_c - Var_20))^2)),
+  "m=40"=sqrt(mean((na.omit(rend_c - Var_40))^2))
+)
+RMSE
+```
+
+De acuerdo a este indicador el mejor valor se obtiene on m=5
+
+Calculamos otros dos indicadores para saber si se refuerza la idea de m=5 o es necesario cambiar
+
+```{r}
+EAMP <- tibble(
+  "m=5"=mean(abs(na.omit(Var_5-rend_c))),
+  "m=10"=mean(abs(na.omit(Var_10-rend_c))),
+  "m=20"=mean(abs(na.omit(Var_20-rend_c))),
+  "m=40"=mean(abs(na.omit(Var_40-rend_c)))
+)
+EAMP
+```
+
+Tambien me recomienda usar m=5
+
+
+
+
+
