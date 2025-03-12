@@ -28,7 +28,6 @@ plot(rend_c)
 
 El rendimiento al cuadrado constituye la estimación mas sencilla de la varianza
 
-
 ```{r}
 library(TTR)
 Var_5 <- SMA(rend_c, n=6)
@@ -64,7 +63,6 @@ RMSE
 
 Aqui voy a poner la formula del RMSE, y explicar que mide
 
-
 ```{r}
 library(tibble)
 RMSE <- tibble(
@@ -92,7 +90,56 @@ EAMP
 
 Tambien me recomienda usar m=5
 
+El tercer indicador es e ECPP, el cual consiste en proporcionalizar el error.
 
+Nota: Como el indicar dice que es necesario dividir entre el rendimiento al cuadrado, vamos a calcular e valor del indicador y eliminar los valores que resulten infinitos ocasionados por el rendimiento cero.
 
+```{r}
+W <- merge.xts(((na.omit(Var_5-rend_c))/na.omit(rend_c))^2, 
+               ((na.omit(Var_10-rend_c))/na.omit(rend_c))^2,
+               ((na.omit(Var_20-rend_c))/na.omit(rend_c))^2,
+               ((na.omit(Var_40-rend_c))/na.omit(rend_c))^2
+               )
 
+W <- subset(W, W$SMA!="Inf")
+```
 
+```{r}
+ECPP <- sqrt(colMeans(na.omit(W)))
+
+```
+
+Este indicador refuerza el resultado que dice que el mejor valor para la estiamacion es m=5.
+
+Si los 3 coinciden bien, si los 3 son diferentes entonces se utiliza el RMSE y en todos los demas casos 2vs1.
+
+Con esta primera conclusion del valor de m, vamos a construir una estimacion futura para la varianza en un dia despues del utlimo dia de informacion disponible.
+
+```{r}
+moptima <- 5
+```
+
+Hoy es
+
+```{r}
+library(lubridate)
+fecha_est <- date(last(precio))+1
+fecha_est
+```
+
+Y mi estimacion es para hoy
+
+Usando los ultimos 5 dias la estimacion de varianza es:
+
+```{r}
+mean(last(rend_c, moptima))
+```
+
+Por lo tanto, la estimacion de volatilidad es de
+
+```{r}
+v_est <- sqrt(mean(last(rend_c, moptima)))
+v_est
+```
+
+Por lo tanto, el valor optimo de m es `r moptima`, la estimacion de volatilidad usando este valor es de `r v_est*100`% y es para el dia `r fecha_est`
