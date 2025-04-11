@@ -1,0 +1,100 @@
+---
+title: "VaR No Param Acciones"
+author: "Rolando Fortanell"
+date: "2025-04-08"
+output: html_document
+---
+
+Supongamos que tenemos un portafolio que tiene las siguientes caracterristicas:
+
+300 acciones de PINFRA
+200 acciones de SORIANA
+
+Trabajaremos con una metodología de simulación histórica, la cual no asume un comportamiento específico.
+
+El procedimiento de esta metodologia consiste en lo siguiente:
+
+1) Calcular un valor inicial del portafolio
+2) Estimar precios futuros de cada uno de los activos que componen el portafolio y con eso vamos a determinar valores futuros de portafolio
+3) Encontrar una función de pérdidas y ganancias
+4) Encontrar el valor del VaR por medio de la función percentil
+
+# 1) Valor inicial del portafolio
+
+```{r}
+library(quantmod)
+claves <- c("PINFRA.MX", "SORIANAB.MX")
+datos <- new.env()
+getSymbols(claves, env = datos, from = "2021-08-04", to = "2025-04-08")
+precio_pinfra <- datos[[claves[1]]][, 6]
+precio_soriana <- datos[[claves[2]]][, 6]
+vo <- as.numeric(last(precio_pinfra) * 300 + last(precio_soriana) * 200)
+vo
+```
+
+# 2) Estimar valores futuros del precio, portafolio
+
+Aqui usaremos la metodología de simulación histórica
+
+$$S_t=S_0(1+R_h)$$
+$R_h$ es el rendimiento histórico de manera que tendremos tantas simulaciones como valores de rendimiento tengamos
+
+```{r}
+rend_pinfra <- na.omit(diff(log(precio_pinfra)))
+rend_soriana <- na.omit(diff(log(precio_soriana)))
+precio_fpinfra <- as.numeric(last(precio_pinfra))*(1+rend_pinfra)
+precio_fsoriana <- as.numeric(last(precio_soriana))*(1+rend_soriana)
+v_futuro <- 300*precio_fpinfra+200*precio_fsoriana
+names(v_futuro) <- "valor_p"
+```
+
+# 3) Calcular la función de pérdida y ganancias
+
+```{r}
+f_per_gan <- v_futuro-vo
+```
+
+si el valor es positivo, significa que en ese escenario estamos previendo una ganancia, de lo contrario se preveé una pérdida
+
+```{r}
+hist(f_per_gan, n=100, col="darkblue", main="Perdidas y Ganancias")
+```
+
+# 4) Calcular el VaR
+
+```{r}
+VaR90 <- quantile(f_per_gan, .1)
+VaR95 <- quantile(f_per_gan, 0.05)
+VaR99 <- quantile(f_per_gan, .01)
+```
+
+```{r}
+hist(f_per_gan, n=100, col="darkblue", main="Perdidas y Ganancias")
+abline(v=VaR90, col="red", lwd=2)
+abline(v=VaR95, col="purple", lwd=2)
+abline(v=VaR99, col="darkgreen", lwd=2)
+```
+
+```{r}
+VaR90/Vo
+Var99/Vo
+```
+
+Calcular el Expected Short Fall
+
+Esta medida nos dice el promedio de las perdidas estimadas que superen al valor del VaR
+
+Por ejemplo el ESF al 90%
+```{r}
+cola90 <- subset(f_per_gan, f_per_gan<VaR90)
+hist(cola90, n=10, col="blue")
+mean(cola90)
+```
+
+
+
+
+
+
+
+

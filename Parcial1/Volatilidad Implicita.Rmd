@@ -1,0 +1,158 @@
+---
+title: "Volatilidad Implicita"
+author: "Rolando Fortanell"
+date: "2025-03-28"
+output: html_document
+---
+
+Descripcion de que es la volatilidad implicita
+La volatilidad implicita es una medida en la cual se mide el movimiento de un activo en un periodo de tiempo pero en lugar de utilizar la volatilidad real se usa una la cual el mercado asume.
+
+
+Hablar del modelo 
+Lo que se observa en la realidad, etc.
+La volatilidad implicita se calcula de las opciones disponibles de un activo, su precio inicial, el strike price, el tiempo, el precio de la prima y la tasa libre de riesgo, aunque la tasa y el precio inicial son fijas, las demas variables cambian lo que hace que las volatilidades implicitas sean diferentes dependiendo estos valores.
+
+Vamos a calcular la volatilidad implicita de una opcion que tiene las siguientes caracteristica:
+
+
+
+```{r}
+So <- 58.39
+k <- 63
+r <-0.09
+t <- 6/12
+d <-0
+c <- 2.71
+
+```
+
+Antes de nada es necesario determinar si se cumple el supuesto basico que hay detras del modelo de B&S, el cual establece que para una opcion tipo call, el precio minimo deber ser el siguiente:
+
+$$\text{Precio opción}\geq max(0, S-Ke^{-rt}) $$
+
+```{r}
+ifelse(c>=max(0, So-k*exp(-r*t)), "Se cumple", "No se cumple")
+```
+
+```{r}
+library(derivmkts)
+```
+
+```{r}
+bscallimpvol(s=So, k=k, r=r, tt=t, d=d,price=c)
+```
+
+```{r}
+library(quantmod)
+library(lubridate)
+datos <- new.env()
+clave <- "WALMEX.MX"
+getSymbols(clave, from="2024-01-01", to="2025-03-28", env=datos)
+precio <- datos[[clave]][,6]
+rendimiento <- na.omit(diff(log(precio)))
+rend_c <- rendimiento^2
+sigma <- sd(rendimiento) * sqrt(252)
+sigma
+```
+
+CVS
+
+```{r}
+library(derivmkts)
+```
+
+
+```{r}
+So <- 63.85
+r <-0.04
+t <- 1
+d <-0
+
+```
+
+# 1
+```{r}
+k1 <- 52.5
+c <- 16.18
+v1 <- bscallimpvol(s=So, k=k1, r=r, tt=t, d=d,price=c)
+v1
+```
+
+# 2
+```{r}
+k2 <- 55
+c <- 17.85
+v2 <- bscallimpvol(s=So, k=k2, r=r, tt=t, d=d,price=c)
+v2
+```
+
+# 3
+```{r}
+k3 <- 57.5
+c <- 14.35
+v3 <- bscallimpvol(s=So, k=k3, r=r, tt=t, d=d,price=c)
+v3
+```
+
+# 4
+```{r}
+k4 <- 60
+c <- 10.28
+v4 <- bscallimpvol(s=So, k=k4, r=r, tt=t, d=d,price=c)
+v4
+```
+
+# 5
+```{r}
+k5 <- 62.5
+c <- 9.16
+v5 <- bscallimpvol(s=So, k=k5, r=r, tt=t, d=d,price=c)
+v5
+```
+# 6
+```{r}
+k6 <- 65
+c <- 11.34
+v6 <- bscallimpvol(s=So, k=k6, r=r, tt=t, d=d,price=c)
+v6
+```
+
+# 7
+```{r}
+k7 <- 67.5
+c <- 9.3
+v7 <- bscallimpvol(s=So, k=k7, r=r, tt=t, d=d,price=c)
+v7
+```
+
+# 8
+```{r}
+k8 <- 70
+c <- 9.15
+v8 <- bscallimpvol(s=So, k=k8, r=r, tt=t, d=d,price=c)
+v8
+```
+
+# 9
+```{r}
+k9 <- 72.5
+c <- 5.64
+v9 <- bscallimpvol(s=So, k=k9, r=r, tt=t, d=d,price=c)
+v9
+```
+
+# 10
+```{r}
+k10 <- 75
+c <- 6.9
+v10 <- bscallimpvol(s=So, k=k10, r=r, tt=t, d=d,price=c)
+v10
+```
+
+```{r}
+k <- c(k1,k2,k3,k4,k5,k6,k7,k8,k9,k10)
+v <- c(v1,v2,v3,v4,v5,v6,v7,v8,v9,v10)
+plot(k,v, type="l")
+```
+
