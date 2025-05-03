@@ -1,0 +1,42 @@
+---
+title: "Backtesting"
+author: "Rolando Fortanell"
+date: "2025-04-11"
+output: html_document
+---
+
+```{r}
+
+VaRP <- -2370
+VaRNP <- -2511
+library(quantmod)
+claves <- c("PINFRA.MX", "SORIANAB.MX")
+datos <- new.env()
+getSymbols(claves, env = datos, from = "2000-01-01")
+precio_pinfra <- datos[[claves[1]]][, 6]
+precio_soriana <- datos[[claves[2]]][, 6]
+vp_hist <- 300*precio_pinfra+200*precio_soriana
+names(vp_hist) <- "Valor_porta"
+```
+Ganancia o pérdida real observada
+
+```{r}
+g_p <- na.omit(diff(vp_hist))
+```
+
+Contar excepciones(el numero de veces que el VaR se quedó por debajo de la pérdidad rea)
+
+```{r}
+BTP <- ifelse(g_p<VaRP,1,0)
+sum(BTP)/length(BTP)*100
+```
+
+Este valor significa que un 0.17% de las veces historicas el VaR se quedó muy por debajo (es decir se equivocó), por lo cual mi estimación del VaR Parametrico es adecuada porque se mantuvo debao del 1% de excepciones
+
+No Parametrico
+```{r}
+BTNP <- ifelse(g_p<VaRNP,1,0)
+sum(BTNP)/length(BTNP)*100
+```
+
+
